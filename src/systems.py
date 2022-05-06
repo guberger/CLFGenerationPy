@@ -1,15 +1,14 @@
 import numpy as np
 
 class GenericSystem:
-    def __init__(self, field):
+    def __init__(self, field) -> None:
         self.field = field
-        return None
     
     def flow(self, vars, inps):
         return self.field(vars, inps)
 
 class AffineMap:
-    def __init__(self, A, b):
+    def __init__(self, A, b) -> None:
         self.A = A
         self.b = b
     
@@ -21,10 +20,9 @@ class AffineSystem:
         self.aff_maps = aff_maps
 
     def flow(self, vars, inps):
-        d = np.zeros(len(vars))
-        for i in range(len(inps)):
-            d = d + inps[i]*(self.aff_maps[i].val(vars))
-        return d
+        vals = np.array([f.val(vars) for f in self.aff_maps])
+        return np.dot(inps, vals)
+
 
 def open_loop(sys, finps):
     field = lambda vars, t : sys.flow(vars, finps(t))
