@@ -1,4 +1,3 @@
-# importing sys
 import unittest
 from math import cos, sin
 import numpy as np
@@ -8,8 +7,9 @@ from src import dynamics
 from src import systems
 
 class TestAckermann(unittest.TestCase):
-    def test_plot_trajectories(self):
-        fig, ax_ = plt.subplots(3, 2)
+    def __init__(self, methodName: str = ...) -> None:
+        super().__init__(methodName)
+        _, ax_ = plt.subplots(3, 2)
 
         nstep = 200
         tdom = np.linspace(0.0, 20.0, nstep)
@@ -54,3 +54,11 @@ class TestAckermann(unittest.TestCase):
 
         plt.savefig('./figs/plot_trajectories.png')
         plt.close()
+
+        self.traj_conom = traj_conom
+        self.traj_coloc = traj_coloc
+
+    def test_deviation(self):
+        devs = [np.linalg.norm(vars_nom - vars_loc)
+            for vars_nom, vars_loc in zip(self.traj_conom, self.traj_coloc)]
+        self.assertLess(max(devs), 0.002)

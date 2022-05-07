@@ -23,6 +23,12 @@ class AffineSystem:
         vals = np.array([f.val(vars) for f in self.aff_maps])
         return np.dot(inps, vals)
 
+class MultiSystem:
+    def __init__(self, syss) -> None:
+        self.syss = syss
+    
+    def flow(self, mode, vars, inps):
+        return self.syss[mode].flow(vars, inps)
 
 def open_loop(sys, finps):
     field = lambda vars, t : sys.flow(vars, finps(t))

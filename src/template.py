@@ -11,11 +11,8 @@ def diff_expr(expr, syms):
 
 class Template:
     def __init__(self, syms, exprs) -> None:
-        self.syms = np.array(syms)
-        self.exprs = np.array(exprs)
+        self.syms = syms
+        self.exprs = exprs
 
     def build_expr(self, coeffs):
         return np.dot(coeffs, self.exprs)
-    
-
-        

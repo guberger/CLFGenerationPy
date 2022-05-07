@@ -1,19 +1,19 @@
-# importing sys
-from cmath import exp
 import unittest
-import math
+from math import pi
 import numpy as np
 import sympy as sp
 import matplotlib.pyplot as plt
 from src import template
 
 class TestTemplate(unittest.TestCase):
-    def test_plot_trajectories(self):
+    def __init__(self, methodName: str = ...) -> None:
+        super().__init__(methodName)
         syms = np.array(sp.symbols('x a'))
+        self.syms = syms
         expr = syms[1]*sp.sin(syms[0])
 
         nstep = 200
-        xdom = np.linspace(0.0, 3*math.pi, nstep)
+        xdom = np.linspace(0.0, 3*pi, nstep)
         adom = [1, 2, 3]
 
         for a in adom:
@@ -43,3 +43,14 @@ class TestTemplate(unittest.TestCase):
 
         plt.savefig('./figs/plot_symfunc.png')
         plt.close()
+
+        self.Dexpr = Dexpr
+        self.Vexpr = Vexpr
+
+    def test_diff(self):
+        x, a = self.syms
+        self.assertEqual(self.Dexpr, a*sp.cos(x) + sp.sin(x))
+
+    def test_build(self):
+        x, a = self.syms
+        self.assertEqual(self.Vexpr, sp.sin(x) + 1.0*a)
