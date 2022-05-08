@@ -16,7 +16,8 @@ class TestAckermann(unittest.TestCase):
 
         finps = lambda t : np.array([
             0.1*(1 + 0.5*cos(t)),
-            0.1*(1 + 0.5*sin(t))])
+            0.1*(1 + 0.5*sin(t))
+        ])
 
         traj_inps = [finps(t) for t in tdom]
 
@@ -25,11 +26,12 @@ class TestAckermann(unittest.TestCase):
             ax_[i, j].plot(tdom, [inps[k] for inps in traj_inps])
 
         L = 0.33
+        vars_init = np.zeros(4)
+        print(vars_init)
 
         nom_sys = ackermann.make_system(L)
         nom_cosys = systems.open_loop(nom_sys, finps)
-        varsinit = np.array([0, 0, 0, 0])
-        traj_conom = dynamics.trajectory(nom_cosys, varsinit, tdom)
+        traj_conom = dynamics.trajectory(nom_cosys, vars_init, tdom)
         finps_augm = lambda t : np.concatenate((np.array([1]), finps(t)))
 
         for k in range(4):
@@ -37,7 +39,7 @@ class TestAckermann(unittest.TestCase):
             ax_[i + 1, j].plot(tdom, [vars[k] for vars in traj_conom])
 
         traj_coloc = []
-        vars = np.array(varsinit)
+        vars = np.array(vars_init)
 
         for k in range(nstep):
             traj_coloc.append(vars)
@@ -59,6 +61,8 @@ class TestAckermann(unittest.TestCase):
         self.traj_coloc = traj_coloc
 
     def test_deviation(self):
-        devs = [np.linalg.norm(vars_nom - vars_loc)
-            for vars_nom, vars_loc in zip(self.traj_conom, self.traj_coloc)]
+        devs = [
+            np.linalg.norm(vars_nom - vars_loc)
+            for vars_nom, vars_loc in zip(self.traj_conom, self.traj_coloc)
+        ]
         self.assertLess(max(devs), 0.002)

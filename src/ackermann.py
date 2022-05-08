@@ -17,7 +17,8 @@ def _local_affine_maps(vars, L):
         [0, 0, cos(alpha), -v*sin(alpha)],
         [0, 0, sin(alpha), +v*cos(alpha)],
         [0, 0, 0, 0],
-        [0, 0, 0, 0]])
+        [0, 0, 0, 0]
+    ])
     b0 = np.array([v*cos(alpha), v*sin(alpha), 0, 0]) - np.dot(A0, vars)
     A1 = np.zeros((4, 4))
     b1 = np.array([0, 0, 1, 0])
@@ -25,11 +26,14 @@ def _local_affine_maps(vars, L):
         [0, 0, 0, 0],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
-        [0, 0, 1/L, 0]])
+        [0, 0, 1/L, 0]
+    ])
     b2 = np.zeros(4)
-    return [sys.AffineMap(A0, b0),
-            sys.AffineMap(A1, b1),
-            sys.AffineMap(A2, b2)]
+    return [
+        sys.AffineMap(A0, b0),
+        sys.AffineMap(A1, b1),
+        sys.AffineMap(A2, b2)
+    ]
 
 def make_local_affine_system(vars, L):
     aff_maps = _local_affine_maps(vars, L)

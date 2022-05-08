@@ -17,10 +17,10 @@ def _rk4_mult(vars, sys, t0, t1, nsub):
         vars = _rk4_single(vars, sys, t, dt)
     return vars
 
-def trajectory(flow, varsinit, tdom, nsub=1):
+def trajectory(flow, vars_init, tdom, nsub=1):
     nstep = len(tdom)
     traj = []
-    vars = np.array(varsinit)
+    vars = np.array(vars_init) # makes copy
     for k in range(nstep):
         traj.append(vars)
         if k == nstep - 1:

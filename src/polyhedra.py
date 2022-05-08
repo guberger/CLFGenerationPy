@@ -7,6 +7,9 @@ class Halfspace:
         self.a = a
         self.beta = beta
 
+    def __repr__(self):
+        return "<Halfspace a:%s, beta:%s>" % (self.a, self.beta)
+
 class ChebyshevError(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)

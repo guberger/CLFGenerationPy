@@ -1,7 +1,6 @@
 import unittest
 from math import sqrt
 import numpy as np
-import matplotlib.pyplot as plt
 import gurobipy
 from src import polyhedra
 
@@ -18,10 +17,8 @@ class TestPolyhedra(unittest.TestCase):
         p.add_halfspace(h)
 
         for i in range(nvar):
-            a = np.zeros(nvar)
-            a[i] = -1
-            h = polyhedra.Halfspace(a, 0)
-            p.add_halfspace(h)
+            a = np.array([1. if j == i else 0. for j in range(nvar)])
+            p.add_halfspace(polyhedra.Halfspace(-a, 0))
 
         _, rad = p.compute_chebyshev_center(output_flag=False)
 
