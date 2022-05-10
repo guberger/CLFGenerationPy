@@ -9,7 +9,6 @@ class TestSymbolics(unittest.TestCase):
     def __init__(self, methodName: str = ...) -> None:
         super().__init__(methodName)
         syms = sp.symbols('x a')
-        self.syms = syms
         exprs = [
             syms[1]*sp.sin(syms[0]),
             1/(syms[1] + syms[0]**2)
@@ -44,6 +43,7 @@ class TestSymbolics(unittest.TestCase):
         plt.savefig('./figs/plot_symfunc.png')
         plt.close()
 
+        self.syms = syms
         self.dexprs = dexprs
 
     def test_diff(self):

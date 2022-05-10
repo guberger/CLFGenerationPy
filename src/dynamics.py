@@ -1,30 +1,30 @@
 import numpy as np
 
-def _rk4_single(vars, sys, t, dt):
-    dvars1 = sys.flow(vars, t)
-    varst = vars + dvars1*(dt/2)
-    dvars2 = sys.flow(varst, t + dt/2)
-    varst = vars + dvars2*(dt/2)
-    dvars3 = sys.flow(varst, t + dt/2)
-    varst = vars + dvars3*dt
-    dvars4 = sys.flow(varst, t + dt)
-    return vars + (dvars1 + dvars2*2 + dvars3*2 + dvars4)*(dt/6)
+def _rk4_single(states, sys, t, dt):
+    derivs1 = sys.flow(states, t)
+    statest = states + derivs1*(dt/2)
+    derivs2 = sys.flow(statest, t + dt/2)
+    statest = states + derivs2*(dt/2)
+    derivs3 = sys.flow(statest, t + dt/2)
+    statest = states + derivs3*dt
+    derivs4 = sys.flow(statest, t + dt)
+    return states + (derivs1 + derivs2*2 + derivs3*2 + derivs4)*(dt/6)
 
-def _rk4_mult(vars, sys, t0, t1, nsub):
+def _rk4_mult(states, sys, t0, t1, nsub):
     dt = (t1 - t0)/nsub
     for i in range(nsub):
         t = t0 + i*dt
-        vars = _rk4_single(vars, sys, t, dt)
-    return vars
+        states = _rk4_single(states, sys, t, dt)
+    return states
 
-def trajectory(flow, vars_init, tdom, nsub=1):
+def trajectory(flow, states_init, tdom, *, nsub=1):
     nstep = len(tdom)
     traj = []
-    vars = np.array(vars_init) # makes copy
+    states = np.array(states_init) # makes copy
     for k in range(nstep):
-        traj.append(vars)
+        traj.append(states)
         if k == nstep - 1:
             break
         t0, t1 = tdom[k:k+2]
-        vars = _rk4_mult(vars, flow, t0, t1, nsub)
+        states = _rk4_mult(states, flow, t0, t1, nsub)
     return traj

@@ -2,8 +2,6 @@ import unittest
 from math import sqrt
 import numpy as np
 import sympy as sp
-import matplotlib.pyplot as plt
-from src import polyhedra
 from src import generator
 
 class TestGenerator(unittest.TestCase):
@@ -26,24 +24,24 @@ class TestGenerator(unittest.TestCase):
             np.array([0., -1.]),
         ]
 
-        for vars in wits_pos:
-            cg.add_constraint_pos(vars)
+        for states in wits_pos:
+            cg.add_constraint_pos(states)
 
         A = np.array([
             [-0.5, -1.],
             [+1., -0.5]
         ])
 
-        wits_lie_vars = [
+        wits_lie_states = [
             np.array([+1., +1.]),
             np.array([+1., -1.]),
             np.array([-1., +1.]),
             np.array([-1., -1.]),
         ]
-        wits_lie = [(vars, A @ vars) for vars in wits_lie_vars]
+        wits_lie = [(states, A @ states) for states in wits_lie_states]
 
-        for vars, dvars in wits_lie:
-            cg.add_constraint_lie(vars, dvars)
+        for states, derivs in wits_lie:
+            cg.add_constraint_lie(states, derivs)
 
         self.cg = cg
 
@@ -55,3 +53,4 @@ class TestGenerator(unittest.TestCase):
         self.assertAlmostEqual(self.coeffs[0], 1 - self.r)
         self.assertAlmostEqual(self.coeffs[1], 1 - self.r)
         self.assertAlmostEqual(self.r, 1/(1 + sqrt(10)/2))
+        self.assertTrue(self.cg.p.contains(self.coeffs))
