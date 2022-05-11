@@ -19,7 +19,7 @@ class LearningProblem:
         self.syms_input = syms_input
         self.systems = systems
         self.exprs_term = exprs_term
-        self.iter_max = 1_000
+        self.iter_max = 1_00
 
     def learn_CLF(self, rmin, demo_func, eps):
         syms_state = self.syms_state
