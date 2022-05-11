@@ -9,13 +9,9 @@ class TestGenerator(unittest.TestCase):
         super().__init__(methodName)
         syms = sp.symbols('x y')
         x, y = syms
-        exprs_val = [x**2, y**2]
-        exprs_dir = [np.array([2*x, 0]), np.array([0, 2*y])]
-        fexprs = [
-            generator.FlowExpr(expr_val, expr_dir)
-            for expr_val, expr_dir in zip(exprs_val, exprs_dir)
-        ]
-        cg = generator.CoeffsGenerator(syms, fexprs)
+        expr_vals = [x**2, y**2]
+        exprs_dirs = [np.array([2*x, 0]), np.array([0, 2*y])]
+        cg = generator.CoeffsGenerator(syms, expr_vals, exprs_dirs)
 
         wits_pos = [
             np.array([+1., 0.]),

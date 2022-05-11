@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from src import ackermann
 from src import dynamics
-from src import systems
+from src import fields
 
 class TestAckermann(unittest.TestCase):
     def __init__(self, methodName: str = ...) -> None:
@@ -28,9 +28,9 @@ class TestAckermann(unittest.TestCase):
         L = 0.33
         states_init = np.zeros(4)
 
-        nom_sys = ackermann.make_system(L)
-        nom_cosys = systems.open_loop(nom_sys, finputs)
-        traj_conom = dynamics.trajectory(nom_cosys, states_init, tdom)
+        nom_field = ackermann.make_field(L)
+        nom_cofield = fields.open_loop(nom_field, finputs)
+        traj_conom = dynamics.trajectory(nom_cofield, states_init, tdom)
         finputs_augm = lambda t : np.concatenate((np.array([1]), finputs(t)))
 
         for k in range(4):
@@ -45,9 +45,9 @@ class TestAckermann(unittest.TestCase):
             if k == nstep - 1:
                 break
             t0, t1 = tdom[k:k+2]
-            loc_sys = ackermann.make_local_affine_system(states, L)
-            loc_cosys = systems.open_loop(loc_sys, finputs_augm)
-            states = dynamics._rk4_mult(states, loc_cosys, t0, t1, 5)
+            loc_field = ackermann.make_local_affine_field(states, L)
+            F = fields.open_loop(loc_field, finputs_augm).flow
+            states = dynamics._rk4_mult(states, F, t0, t1, 5)
         
         for k in range(4):
             i, j = np.unravel_index(k, ax_.shape)

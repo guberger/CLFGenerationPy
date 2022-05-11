@@ -1,17 +1,17 @@
 import numpy as np
 from math import cos, sin
-from src import systems
+from src import fields
 
-def _field(states, inputs, L):
+def _F(states, inputs, L):
     v, alpha = states[2:4]
     u1, u2 = inputs
     return np.array([v*cos(alpha), v*sin(alpha), u1, v/L*u2])
 
-def make_system(L):
-    field = lambda states, inputs : _field(states, inputs, L)
-    return systems.GenericSystem(field)
+def make_field(L):
+    F = lambda states, inputs : _F(states, inputs, L)
+    return fields.GenericField(F)
 
-def _local_affine_maps(states, L):
+def _aff_maps(states, L):
     v, alpha = states[2:4]
     A0 = np.array([
         [0, 0, cos(alpha), -v*sin(alpha)],
@@ -30,11 +30,11 @@ def _local_affine_maps(states, L):
     ])
     b2 = np.zeros(4)
     return [
-        systems.AffineMap(A0, b0),
-        systems.AffineMap(A1, b1),
-        systems.AffineMap(A2, b2)
+        fields.AffineMap(A0, b0),
+        fields.AffineMap(A1, b1),
+        fields.AffineMap(A2, b2)
     ]
 
-def make_local_affine_system(states, L):
-    aff_maps = _local_affine_maps(states, L)
-    return systems.AffineSystem(aff_maps)
+def make_local_affine_field(states, L):
+    aff_maps = _aff_maps(states, L)
+    return fields.AffineField(aff_maps)

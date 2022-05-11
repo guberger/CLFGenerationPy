@@ -2,16 +2,13 @@ import numpy as np
 from src import symbolics
 from src import polyhedra
 
-class FlowExpr:
-    def __init__(self, expr_val, expr_dir) -> None:
-        self.val = expr_val
-        self.dir = expr_dir
-
 class CoeffsGenerator:
-    def __init__(self, syms, fexprs) -> None:
+    def __init__(self, syms, expr_vals, exprs_dirs) -> None:
         self.syms = syms
-        self.fexprs = fexprs
-        ncoeff = len(fexprs)
+        ncoeff = len(expr_vals)
+        assert len(exprs_dirs) == ncoeff
+        self.expr_vals = expr_vals
+        self.exprs_dirs = exprs_dirs
         self.rmax = 2
         p = polyhedra.Polyhedron(ncoeff)
         for i in range(ncoeff):
@@ -22,15 +19,15 @@ class CoeffsGenerator:
 
     def add_constraint_pos(self, states):
         a = np.array([
-            symbolics.evalf_expr(fexpr.val, self.syms, states)
-            for fexpr in self.fexprs
+            symbolics.evalf_expr(expr_val, self.syms, states)
+            for expr_val in self.expr_vals
         ])
         self.p.add_halfspace(polyhedra.Halfspace(-a, 0))
 
     def add_constraint_lie(self, states, derivs):
         a = np.array([
-            symbolics.evalf_expr(np.dot(fexpr.dir, derivs), self.syms, states)
-            for fexpr in self.fexprs
+            symbolics.evalf_expr(np.dot(exprs_dir, derivs), self.syms, states)
+            for exprs_dir in self.exprs_dirs
         ])
         self.p.add_halfspace(polyhedra.Halfspace(+a, 0))
 
