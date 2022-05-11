@@ -3,7 +3,7 @@ from math import pi
 import numpy as np
 import sympy as sp
 import matplotlib.pyplot as plt
-from src import symbolics
+from src.symbolics import evalf_expr, diff_expr
 
 class TestSymbolics(unittest.TestCase):
     def __init__(self, methodName: str = ...) -> None:
@@ -21,17 +21,17 @@ class TestSymbolics(unittest.TestCase):
         for a in adom:
             for expr in exprs:
                 points = [
-                    symbolics.evalf_expr(expr, syms, np.array([x, a]))
+                    evalf_expr(expr, syms, np.array([x, a]))
                     for x in xdom
                 ]
                 plt.plot(xdom, points)
         
-        dexprs = [symbolics.diff_expr(expr, syms) for expr in exprs]
+        dexprs = [diff_expr(expr, syms) for expr in exprs]
 
         for a in adom:
             for dexpr in dexprs:
                 points = [
-                    symbolics.evalf_expr(
+                    evalf_expr(
                         np.dot(dexpr, np.array([1, 1])),
                         syms,
                         np.array([x, a])

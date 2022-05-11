@@ -1,7 +1,7 @@
 import numpy as np
-from src import generator
-from src import symbolics
-from src import verifier
+from src.symbolics import evalf_expr, diff_expr
+from src.polynomial.generator import CoeffsGenerator
+from src.polynomial.verifier import VerifierSimple, VerifierParam
 
 class System:
     def __init__(self, exprs_field, dom_state, dom_input) -> None:
@@ -11,7 +11,7 @@ class System:
 
 class LearnerError(Exception):
     def __init__(self, *args: object) -> None:
-        super().__init__(*args)
+        super().__init__(*args)    
 
 class LearningProblem:
     def __init__(self, syms_state, syms_input, systems, exprs_term) -> None:
@@ -26,9 +26,9 @@ class LearningProblem:
         syms_input = self.syms_input
         expr_vals = self.exprs_term
         exprs_dirs = [
-            symbolics.diff_expr(expr_val, syms_state)
+            diff_expr(expr_val, syms_state)
             for expr_val in expr_vals]
-        cg = generator.CoeffsGenerator(syms_state, expr_vals, exprs_dirs)
+        cg = CoeffsGenerator(syms_state, expr_vals, exprs_dirs)
 
         iter = 0
 
@@ -44,12 +44,12 @@ class LearningProblem:
                 raise LearnerError('Radius too small: ' + str(r))
 
             Vexpr = np.dot(expr_vals, coeffs)
-            dVexprs = symbolics.diff_expr(Vexpr, syms_state)
+            dVexprs = diff_expr(Vexpr, syms_state)
             res = True
 
-            print('Verify pos...', end='')
+            print('Verify pos...', end='', flush=True)
             for system in self.systems:
-                verif = verifier.VerifierSimple(
+                verif = VerifierSimple(
                     syms_state, system.dom_state, rmin
                 )
                 res, states = verif.check_expr(Vexpr)
@@ -63,9 +63,9 @@ class LearningProblem:
             else:
                 print(' No CE found')
             
-            print('Verify lie...', end='')
+            print('Verify lie...', end='', flush=True)
             for system in self.systems:
-                verif = verifier.VerifierParam(
+                verif = VerifierParam(
                     syms_state, system.dom_state, rmin,
                     syms_input, system.dom_input
                 )
@@ -77,7 +77,7 @@ class LearningProblem:
                     syms = np.concatenate((syms_state, syms_input))
                     vars = np.concatenate((states, inputs))
                     derivs = np.array([
-                        symbolics.evalf_expr(expr_field, syms, vars)
+                        evalf_expr(expr_field, syms, vars)
                         for expr_field in system.exprs_field
                     ])                        
                     cg.add_constraint_lie(states, derivs)

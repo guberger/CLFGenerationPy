@@ -1,6 +1,6 @@
 import numpy as np
 from math import cos, sin
-from src import fields
+from src.fields import GenericField, AffineMap, AffineField
 
 def _F(states, inputs, L):
     v, alpha = states[2:4]
@@ -9,7 +9,7 @@ def _F(states, inputs, L):
 
 def make_field(L):
     F = lambda states, inputs : _F(states, inputs, L)
-    return fields.GenericField(F)
+    return GenericField(F)
 
 def _aff_maps(states, L):
     v, alpha = states[2:4]
@@ -30,11 +30,11 @@ def _aff_maps(states, L):
     ])
     b2 = np.zeros(4)
     return [
-        fields.AffineMap(A0, b0),
-        fields.AffineMap(A1, b1),
-        fields.AffineMap(A2, b2)
+        AffineMap(A0, b0),
+        AffineMap(A1, b1),
+        AffineMap(A2, b2)
     ]
 
 def make_local_affine_field(states, L):
     aff_maps = _aff_maps(states, L)
-    return fields.AffineField(aff_maps)
+    return AffineField(aff_maps)
