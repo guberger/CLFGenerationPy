@@ -21,7 +21,7 @@ class TestSymbolics(unittest.TestCase):
         for a in adom:
             for expr in exprs:
                 points = [
-                    evalf_expr(expr, syms, np.array([x, a]))
+                    evalf_expr(expr, syms, (x, a))
                     for x in xdom
                 ]
                 plt.plot(xdom, points)
@@ -31,11 +31,7 @@ class TestSymbolics(unittest.TestCase):
         for a in adom:
             for dexpr in dexprs:
                 points = [
-                    evalf_expr(
-                        np.dot(dexpr, np.array([1, 1])),
-                        syms,
-                        np.array([x, a])
-                    )
+                    evalf_expr(np.dot(dexpr, (1, 1)), syms, (x, a))
                     for x in xdom
                 ]
                 plt.plot(xdom, points)
